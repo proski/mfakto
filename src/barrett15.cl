@@ -1044,7 +1044,7 @@ Precalculated here since it is the same for all steps in the following loop */
   ffd = CONVERT_DOUBLE_RTP_V(mad24(f.d4, 32768u, f.d3));
   ffd = ffd * 1073741824.0+ CONVERT_DOUBLE_RTP_V(mad24(f.d2, 32768u, f.d1));
   // this is at least 45 bits - f.d0 is not needed
-  ffd = ffd * 32768.0;
+  ffd = ffd * 32768.0 + CONVERT_DOUBLE_RTP_V(f.d0);
   ffd = as_double(0x3feffffffffffffdL) / ffd;     // should be a bit less than 1.0
 
   div_150_75_d(&u, tmp, f, ffd
@@ -1219,7 +1219,7 @@ Precalculated here since it is the same for all steps in the following loop */
   ffd = CONVERT_DOUBLE_RTP_V(mad24(f.d4, 32768u, f.d3));
   ffd = ffd * 1073741824.0+ CONVERT_DOUBLE_RTP_V(mad24(f.d2, 32768u, f.d1));
   // this is at least 45 bits - f.d0 is not needed
-  ffd = ffd * 32768.0;
+  ffd = ffd * 32768.0 + CONVERT_DOUBLE_RTP_V(f.d0);
   ffd = as_double(0x3feffffffffffffdL) / ffd;     // should be a bit less than 1.0
 
   div_150_75_d(&u, tmp, f, ffd
@@ -1388,7 +1388,7 @@ ff = 1/f as float, needed in div_192_96().
   ffd = CONVERT_DOUBLE_RTP_V(mad24(f.d4, 32768u, f.d3));
   ffd = ffd * 1073741824.0+ CONVERT_DOUBLE_RTP_V(mad24(f.d2, 32768u, f.d1));
   // this is at least 45 bits - f.d0 is not needed
-  ffd = ffd * 32768.0;
+  ffd = ffd * 32768.0 + CONVERT_DOUBLE_RTP_V(f.d0);
   ffd = as_double(0x3feffffffffffffdL) / ffd;     // should be a bit less than 1.0
 
   div_150_75_d(&u, tmp, f, ffd
@@ -1563,7 +1563,7 @@ ff = 1/f as float, needed in div_192_96().
   ffd = CONVERT_DOUBLE_RTP_V(mad24(f.d4, 32768u, f.d3));
   ffd = ffd * 1073741824.0+ CONVERT_DOUBLE_RTP_V(mad24(f.d2, 32768u, f.d1));
   // this is at least 45 bits - f.d0 is not needed
-  ffd = ffd * 32768.0;
+  ffd = ffd * 32768.0 + CONVERT_DOUBLE_RTP_V(f.d0);
   ffd = as_double(0x3feffffffffffffdL) / ffd;     // should be a bit less than 1.0
 
   div_150_75_d(&u, tmp, f, ffd
@@ -1765,7 +1765,7 @@ ff = 1/f as float, needed in div_192_96().
   ffd = CONVERT_DOUBLE_RTP_V(mad24(f.d4, 32768u, f.d3));
   ffd = ffd * 1073741824.0+ CONVERT_DOUBLE_RTP_V(mad24(f.d2, 32768u, f.d1));
   // this is at least 45 bits - f.d0 is not needed
-  ffd = ffd * 32768.0;
+  ffd = ffd * 32768.0 + CONVERT_DOUBLE_RTP_V(f.d0);
   ffd = as_double(0x3feffffffffffffdL) / ffd;     // should be a bit less than 1.0
 
   div_150_75_d(&u, tmp, f, ffd
