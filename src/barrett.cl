@@ -1140,6 +1140,13 @@ DIV_160_96 here. */
 #undef DIV_160_96
 
 
+#undef TRACE_KERNEL
+#define TRACE_KERNEL 5
+#undef TRACE_TID
+#define TRACE_TID trace_tid
+#undef V
+#define V(_v) ((_v).y)
+
 /*
  * TF 64-76 bits using 32-bit barrett:
  * square - reduce - shift
@@ -1154,6 +1161,15 @@ void check_barrett32_76(uint shifter, const int96_v f, const uint tid, const int
 #endif
   __private float_v  ff;
   __private uint_v   carry;
+  __private int debug_x =
+      f.d2.x == 0x26 && f.d1.x == 0x40b94688 && f.d0.x == 0x5f612197;
+  __private int debug_y =
+      f.d2.y == 0x26 && f.d1.y == 0x40b94688 && f.d0.y == 0x5f612197;
+  __private uint trace_tid = as_uint(-1);
+
+  if (debug_x || debug_y) {
+      trace_tid = tid;
+  }
 
 /*
 ff = f as float, needed in mod_160_96().
@@ -1270,7 +1286,22 @@ Precalculated here since it is the same for all steps in the following loop */
         V(b.d2), V(b.d1), V(b.d0), V(a.d2), V(a.d1), V(a.d0));
 #endif
 
-    if(shifter&0x80000000)shl_96(&a);					// "optional multiply by 2" in Prime 95 documentation
+    if(shifter&0x80000000) {
+	if (tid==TRACE_TID) printf("pre-shift,  shifter=%x, a=%x:%x:%x\n", shifter, V(a.d2), V(a.d1), V(a.d0));
+	//shl_96(&a);					// "optional multiply by 2" in Prime 95 documentation
+	a.d2 <<= 1;
+	//if (tid==TRACE_TID) printf("step1 a.d2=%x\n", V(a.d2));
+	a.d2 |= a.d1 >> 31;
+	//if (tid==TRACE_TID) printf("step2 a.d2=%x\n", V(a.d2));
+	a.d1 <<= 1;
+	//if (tid==TRACE_TID) printf("step3 a.d1=%x\n", V(a.d1));
+	a.d1 |= a.d0 >> 31;
+	//if (tid==TRACE_TID) printf("step4 a.d1=%x\n", V(a.d1));
+        a.d0 <<= 1;
+	if (tid==TRACE_TID) printf("post-shift, shifter=%x, a=%x:%x:%x\n", shifter, V(a.d2), V(a.d1), V(a.d0));
+    } else {
+	if (tid==TRACE_TID) printf("not shifting, shifter=%x, a=%x:%x:%x\n", shifter, V(a.d2), V(a.d1), V(a.d0));
+    }
 
 #if (TRACE_KERNEL > 2)
     if (tid==TRACE_TID) printf((__constant char *)"loop: tmp=%x:%x:%x mod f=%x:%x:%x = %x:%x:%x (a)\n",
@@ -1293,7 +1324,22 @@ Precalculated here since it is the same for all steps in the following loop */
                        , 15, 10 , modbasecase_debug
 #endif
                        );
+  if (debug_x) {
+      printf("end: tid=%d, a.x=%x:%x:%x, f.x=%x:%x:%x\n",
+             tid, a.d2.x, a.d1.x, a.d0.x, f.d2.x, f.d1.x, f.d0.x);
+  }
+  if (debug_y) {
+      printf("end: tid=%d, a.y=%x:%x:%x, f.y=%x:%x:%x\n",
+             tid, a.d2.y, a.d1.y, a.d0.y, f.d2.y, f.d1.y, f.d0.y);
+  }
 }
+
+#undef TRACE_KERNEL
+#define TRACE_KERNEL 0
+#undef TRACE_TID
+#define TRACE_TID 0
+#undef V
+#define V(x) x.s0
 
 /*
  * TF 64-77 bits using 32-bit barrett:

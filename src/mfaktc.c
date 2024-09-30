@@ -924,12 +924,15 @@ RET_ERROR we might have a serios problem
   unsigned int retval=1, i, ind;
   enum GPUKernels kernels[UNKNOWN_KERNEL], kernel_index;
   // this index is 1 less than what -st/-st2 report
+  unsigned int index[] = { 33 };
+  /*
   unsigned int index[] = {  1547, 12, 33, 50, 72, 73, 82, 88, 99,  // ~ one from each bitlevel
                             106, 117, 129, 140, 154, 158, 164,
                             175, 177, 183, 190, 194, 198, 199,
                             204, 207, 210, 355,  358,  666,   // some very small factors
                            1
                          };
+  */
   // save the SievePrimes ini value as the selftest may lower it to fit small test-exponents
   unsigned int sieve_primes_save = mystuff->sieve_primes;
   unsigned int verbosity_save = mystuff->verbosity;
