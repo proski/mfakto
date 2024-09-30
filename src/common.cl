@@ -46,7 +46,7 @@ void mod_simple_96_and_check_big_factor96(const int96_v q,const int96_v n, const
 #endif
 );
 
-void mod_simple_even_96_and_check_big_factor96(const int96_v q,const int96_v n, const float_v nf, __global uint * const RES
+int mod_simple_even_96_and_check_big_factor96(const int96_v q,const int96_v n, const float_v nf, __global uint * const RES
 #ifdef CHECKS_MODBASECASE
                   , const int bit_max64, const uint limit, __global uint * restrict modbasecase_debug
 #endif
@@ -700,7 +700,7 @@ so we compare the LSB of qi and q.d0, if they are the same (both even or both od
   }
 }
 
-void mod_simple_even_96_and_check_big_factor96(const int96_v q,const int96_v n, const float_v nf, __global uint * const RES
+int mod_simple_even_96_and_check_big_factor96(const int96_v q,const int96_v n, const float_v nf, __global uint * const RES
 #ifdef CHECKS_MODBASECASE
                   , const int bit_max64, const uint limit, __global uint * restrict modbasecase_debug
 #endif
@@ -714,6 +714,7 @@ q must be less than 100n!
   __private float_v qf;
   __private uint_v qi, tmp;
   __private int96_v nn;
+  __private int found = 0;
 
   qf = CONVERT_FLOAT_V(q.d2);
   qf = qf * 4294967296.0f + CONVERT_FLOAT_V(q.d1);
@@ -763,11 +764,40 @@ so we compare the LSB of qi and q.d0, if they are the same (both even or both od
         RES[index * 3 + 1] = n.d2;
         RES[index * 3 + 2] = n.d1;
         RES[index * 3 + 3] = n.d0;
+	found = 1;
       }
     }
 #elif (VECTOR_SIZE == 2)
-  EVAL_RES_tmp(x)
-  EVAL_RES_tmp(y)
+  if((tmp.x)==0)
+  {
+      int index = ATOMIC_INC(RES[0]);
+      if (index < 10)
+      {
+        RES[index *3 + 1]=n.d2.x;
+        RES[index *3 + 2]=n.d1.x;
+        RES[index *3 + 3]=n.d0.x;
+	printf("X q.x=%x:%x:%x n.x=%x:%x:%x q.y=%x:%x:%x n.y=%x:%x:%x\n",
+		q.d2.x, q.d1.x, q.d0.x, n.d2.x, n.d1.x, n.d0.x,
+		q.d2.y, q.d1.y, q.d0.y, n.d2.y, n.d1.y, n.d0.y);
+	found = 1;
+      }
+  }
+  if((tmp.y)==0)
+  {
+      int index = ATOMIC_INC(RES[0]);
+      if (index < 10)
+      {
+        RES[index *3 + 1]=n.d2.y;
+        RES[index *3 + 2]=n.d1.y;
+        RES[index *3 + 3]=n.d0.y;
+	printf("Y q.x=%x:%x:%x n.x=%x:%x:%x q.y=%x:%x:%x n.y=%x:%x:%x\n",
+		q.d2.x, q.d1.x, q.d0.x, n.d2.x, n.d1.x, n.d0.x,
+		q.d2.y, q.d1.y, q.d0.y, n.d2.y, n.d1.y, n.d0.y);
+	found = 1;
+      }
+  }
+  // EVAL_RES_tmp(x)
+  // EVAL_RES_tmp(y)
 #elif (VECTOR_SIZE == 3)
   EVAL_RES_tmp(x)
   EVAL_RES_tmp(y)
@@ -805,6 +835,7 @@ so we compare the LSB of qi and q.d0, if they are the same (both even or both od
   EVAL_RES_tmp(sf)
 #endif
   }
+  return found;
 }
 
 

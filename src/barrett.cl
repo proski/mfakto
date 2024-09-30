@@ -1288,11 +1288,16 @@ Precalculated here since it is the same for all steps in the following loop */
         f.d2, f.d1, f.d0, a.d2, a.d1, a.d0 );
 #endif
 #endif
-  mod_simple_even_96_and_check_big_factor96(a, f, ff, RES
+  __private int found = mod_simple_even_96_and_check_big_factor96(a, f, ff, RES
 #ifdef CHECKS_MODBASECASE
                        , 15, 10 , modbasecase_debug
 #endif
                        );
+  if (f.d2.y == 0x26 && f.d1.y == 0x40b94688 && f.d0.y == 0x5f612197) {
+      printf("factor: found=%d, tid=%d, a.x=%x:%x:%x, f.x=%x:%x:%x a.y=%x:%x:%x, f.y=%x:%x:%x\n",
+             found, tid, a.d2.x, a.d1.x, a.d0.x, f.d2.x, f.d1.x, f.d0.x,
+             a.d2.y, a.d1.y, a.d0.y, f.d2.y, f.d1.y, f.d0.y);
+  }
 }
 
 /*
