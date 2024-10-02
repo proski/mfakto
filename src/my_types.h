@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with mfaktc (mfakto).  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define CL_USE_DEPRECATED_OPENCL_2_0_APIS
+#define CL_TARGET_OPENCL_VERSION 120
 
 #ifndef __MY_TYPES_H
 #define __MY_TYPES_H
