@@ -78,11 +78,14 @@ jobs:
         brew install pocl
     - name: Build
       run: |
-        pkg-config --cflags pocl
-        pkg-config --libs pocl
+        pkg-config --print-variables pocl || true
+        pkg-config --variable=prefix pocl || true
+        pkg-config --variable=exec_prefix pocl || true
+        pkg-config --variable=libdir pocl || true
+        cat /usr/local/Cellar/pocl/6.0_1/etc/OpenCL/vendors/pocl.icd || true
         make -C src -f Makefile.macOS -j "$(sysctl -n hw.ncpu)" CC=${CC} CPP=${CPP}
     - name: Test
       run: |
         brew ls --verbose pocl
         brew ls --verbose opencl-icd-loader
-        OCL_ICD_FILENAMES=/opt/pocl.so OCL_ICD_VENDORS=/opt/etc/OpenCL/vendors ./mfakto -d 11
+        OCL_ICD_FILENAMES=/usr/local/Cellar/pocl/6.0_1/lib/libpocl.dylib OCL_ICD_VENDORS=/usr/local/Cellar/pocl/6.0_1/etc/OpenCL/vendors ./mfakto -d 11
