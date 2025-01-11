@@ -81,9 +81,11 @@ jobs:
         make -C src -f Makefile.macOS -j "$(sysctl -n hw.ncpu)" CC=${CC} CPP=${CPP}
     - name: Test
       run: |
+        set -x
         export POCL_PREFIX="$(pkg-config --variable=prefix pocl)"
         export POCL_VENDORS=$POCL_PREFIX/etc/OpenCL/vendors
         export POCL_DYLIB="$(cat $POCL_VENDORS/pocl.icd)"
         export OCL_ICD_FILENAMES="$POCL_DYLIB"
         export OCL_ICD_VENDORS="$POCL_VENDORS"
-        ./mfakto -d c
+        export DYLD_INSERT_LIBRARIES="$POCL_DYLIB"
+        ./mfakto -d 11
