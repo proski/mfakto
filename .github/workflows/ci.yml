@@ -78,7 +78,11 @@ jobs:
         brew install pocl
     - name: Build
       run: |
-        make -C src -f Makefile.macOS -j "$(sysctl -n hw.ncpu)" CC=${CC} CPP=${CPP} CFLAGS="-O3 -Wall $(pkg-config --cflags pocl)" LDFLAGS="$(pkg-config --libs pocl)"
+        pkg-config --cflags pocl
+        pkg-config --libs pocl
+        make -C src -f Makefile.macOS -j "$(sysctl -n hw.ncpu)" CC=${CC} CPP=${CPP}
     - name: Test
       run: |
-        ./mfakto -d 11
+        brew ls --verbose pocl
+        brew ls --verbose opencl-icd-loader
+        OCL_ICD_FILENAMES=/opt/pocl.so OCL_ICD_VENDORS=/opt/etc/OpenCL/vendors ./mfakto -d 11
