@@ -131,6 +131,7 @@ jobs:
     - name: Create artifact and release asset
       if: startsWith(github.ref, 'refs/tags/')
       run: |
+        dir "C:\msys64\mingw64\lib"
         Compress-Archive -DestinationPath mfakto-windows-msys2.zip -CompressionLevel Optimal -Path *.cl, Changelog-mfakto.txt, COPYING, datatypes.h, mfakto.exe, mfakto.ini, README-SpecialVersions.txt, README.txt, tf_debug.h, todo.txt
     - name: Upload release assets on release
       uses: softprops/action-gh-release@v2
